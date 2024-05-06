@@ -41,4 +41,5 @@ WHERE TO_CHAR(joining_date,'mm-yyyy') between '01-2022' and '07-2022';
 select position('a' in first_name) from worker
 where first_name  = 'Amitah';
 --ex10: macedonian-vintages.
-select designation AS wine, substring(title FROM LENGTH(winery) +2 FOR 4) from winemag_p2;
+select substring(title FROM LENGTH(winery) +2 FOR 4) from winemag_p2
+Where country ='Macedonia';
