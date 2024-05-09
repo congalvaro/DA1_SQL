@@ -17,6 +17,12 @@ CASE
 END AS triangle
 FROM Triangle;
 --ex3: datalemur-uncategorized-calls-percentage.
+SELECT 
+ROUND(CAST(100.0*SUM(CASE
+  WHEN COALESCE(call_category,'n/a') = 'n/a' THEN 1
+  ELSE 0
+END)/COUNT(*) AS decimal),1)
+FROM callers;
 --ex4: datalemur-find-customer-referee.
 SELECT
 name
