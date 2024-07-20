@@ -17,3 +17,21 @@ WHERE EXTRACT(YEAR FROM transaction_date)= 2022
 GROUP BY category, product)
 SELECT category, product, total_spend FROM ranked_list
 WHERE rank_spend <= 2;
+--ex3: datalemur-frequent-callers.
+WITH holder_count AS
+(
+SELECT policy_holder_id, count(case_id) AS call_count FROM callers
+GROUP BY policy_holder_id
+HAVING count(case_id) >= 3)
+SELECT count(*) AS policy_holder_count FROM holder_count;
+--ex4: datalemur-page-with-no-likes.
+WITH like_count AS
+(
+SELECT p.page_id, count(pl.user_id) 
+FROM pages p
+LEFT JOIN page_likes pl ON p.page_id = pl.page_id
+GROUP BY p.page_id
+HAVING count(pl.user_id) = 0)
+SELECT page_id FROM like_count;
+--ex5: datalemur-user-retention.
+
