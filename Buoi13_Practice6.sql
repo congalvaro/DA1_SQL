@@ -34,4 +34,18 @@ GROUP BY p.page_id
 HAVING count(pl.user_id) = 0)
 SELECT page_id FROM like_count;
 --ex5: datalemur-user-retention.
+SELECT EXTRACT(MONTH FROM curr_month.event_date) AS month, 
+      count(DISTINCT curr_month.user_id) AS monthly_active_users
+FROM user_actions AS curr_month
+WHERE EXISTS (
+SELECT EXTRACT(MONTH FROM last_month.event_date) AS month,
+        last_month.user_id
+FROM user_actions AS last_month
+WHERE curr_month.user_id = last_month.user_id
+    AND EXTRACT(MONTH FROM last_month.event_date) =
+    EXTRACT(MONTH FROM curr_month.event_date - INTERVAL '1 MONTH'))
+      AND EXTRACT(MONTH FROM curr_month.event_date) = 7
+      AND EXTRACT(YEAR FROM curr_month.event_date) = 2022
+GROUP BY EXTRACT(MONTH FROM event_date);
+--ex6: leetcode-monthly-transactions.
 
