@@ -48,4 +48,29 @@ WHERE curr_month.user_id = last_month.user_id
       AND EXTRACT(YEAR FROM curr_month.event_date) = 2022
 GROUP BY EXTRACT(MONTH FROM event_date);
 --ex6: leetcode-monthly-transactions.
+WITH approved_transactions AS
+(SELECT TO_CHAR(trans_date, 'yyyy-mm') AS month, 
+        country,
+        count(*) AS approved_count,
+        sum(amount) AS approved_total_amount
+FROM Transactions 
+WHERE state ='approved'
+GROUP BY TO_CHAR(trans_date, 'yyyy-mm'), country),
+incoming_transactions AS 
+(SELECT TO_CHAR(trans_date, 'yyyy-mm') AS month,
+        country,
+        count(*) AS trans_count,
+        sum(amount) AS trans_total_amount
+FROM Transactions
+GROUP BY TO_CHAR(trans_date, 'yyyy-mm'), country)
+SELECT it.month,
+        it.country,
+        it.trans_count,
+        it.trans_total_amount,
+        at.approved_count,
+        at.approved_total_amount
+FROM incoming_transactions AS it
+JOIN approved_transactions AS at
+    ON it.month = at.month AND it.country = at.country;
+
 
