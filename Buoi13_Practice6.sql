@@ -72,5 +72,45 @@ SELECT it.month,
 FROM incoming_transactions AS it
 JOIN approved_transactions AS at
     ON it.month = at.month AND it.country = at.country;
-
+--ex7: leetcode-product-sales-analysis.
+WITH a AS
+(SELECT s.product_id,
+        s.year, 
+        s.quantity,
+        s.price,
+        RANK() OVER(PARTITION BY s.product_id
+        ORDER BY s.year ASC) AS rank
+FROM Sales AS s
+JOIN Product AS p ON s.product_id = p.product_id)
+SELECT product_id,
+        year AS first_year,
+        quantity,
+        price
+FROM a
+WHERE rank = 1;
+--ex8: leetcode-customers-who-bought-all-products.
+WITH cus AS
+(SELECT customer_id,
+        count(product_key) AS product_count
+FROM Customer
+GROUP BY customer_id)
+SELECT customer_id
+FROM cus
+WHERE product_count =  (SELECT count(*) FROM Product);
+--ex9: leetcode-employees-whose-manager-left-the-company.
+SELECT employee_id
+FROM Employees
+WHERE salary < 30000
+AND manager_id IS NOT NULL
+AND manager_id NOT IN (SELECT employee_id FROM Employees)
+ORDER BY employee_id;
+--ex10: leetcode-primary-department-for-each-employee.
+WITH company_count AS 
+(SELECT company_id, title, description, count(*) AS count_dup 
+FROM job_listings
+GROUP BY company_id, title, description)
+SELECT count(company_id)
+FROM company_count
+WHERE count_dup >= 2;
+--ex11: leetcode-movie-rating.
 
