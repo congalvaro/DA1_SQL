@@ -113,4 +113,31 @@ SELECT count(company_id)
 FROM company_count
 WHERE count_dup >= 2;
 --ex11: leetcode-movie-rating.
-
+WITH name_chosen AS
+(SELECT u.name AS results
+FROM MovieRating AS mr
+JOIN Users AS u ON u.user_id = mr.user_id
+GROUP BY u.name
+ORDER BY u.name, count(mr.*) DESC
+LIMIT 1),
+title_chosen AS
+(SELECT m.title 
+FROM MovieRating AS mr
+JOIN Movies AS m ON mr.movie_id = m.movie_id
+WHERE EXTRACT(YEAR FROM mr.created_at) = 2020
+AND EXTRACT(MONTH FROM mr.created_at) = 2
+GROUP BY m.title
+ORDER BY  AVG(mr.rating) DESC, m.title ASC 
+LIMIT 1)
+SELECT * FROM name_chosen
+UNION ALL
+SELECT * FROM title_chosen
+--ex12: leetcode-who-has-the-most-friends.
+WITH friend_list AS
+(SELECT requester_id AS friend FROM RequestAccepted
+UNION ALL 
+SELECT accepter_id AS friend FROM RequestAccepted)
+SELECT friend AS id, count(*) AS num FROM friend_list
+GROUP BY friend
+ORDER BY count(*) DESC
+LIMIT 1;
